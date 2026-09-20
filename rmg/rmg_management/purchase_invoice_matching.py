@@ -85,8 +85,11 @@ def calculate_match(po, receipt, claimed_amount):
 	expected_amount = 0.0
 
 	for po_item in po.items:
+		# On a Purchase Receipt Item, `qty` is already the Accepted Quantity:
+		# ERPNext enforces received_qty = qty + rejected_qty. Subtracting the
+		# rejected quantity again would deduct the QC rejection twice.
 		accepted_quantity = sum(
-			flt(receipt_item.qty) - flt(receipt_item.rejected_qty)
+			flt(receipt_item.qty)
 			for receipt_item in receipt.items
 			if receipt_item.item_code == po_item.item_code
 		)

@@ -1,21 +1,21 @@
 import frappe
-from frappe.tests.utils import FrappeTestCase
+from frappe.tests import IntegrationTestCase
 
 
-class TestRmgCoreFlow(FrappeTestCase):
+class TestRmgCoreFlow(IntegrationTestCase):
 	def test_style_master_and_lc_allocation_flow(self):
-		if not frappe.db.exists("Customer", "Demo Buyer"):
-			frappe.get_doc({"doctype": "Customer", "customer_name": "Demo Buyer"}).insert(ignore_permissions=True)
+		if not frappe.db.exists("Customer", "TST-Demo Buyer"):
+			frappe.get_doc({"doctype": "Customer", "customer_name": "TST-Demo Buyer"}).insert(ignore_permissions=True)
 
-		if not frappe.db.exists("Bank", "Bank of Test"):
-			frappe.get_doc({"doctype": "Bank", "bank_name": "Bank of Test"}).insert(ignore_permissions=True)
+		if not frappe.db.exists("Bank", "TST-Bank of Test"):
+			frappe.get_doc({"doctype": "Bank", "bank_name": "TST-Bank of Test"}).insert(ignore_permissions=True)
 
 		style = frappe.get_doc(
 			{
 				"doctype": "Style Master",
-				"style_number": "ST-1001",
+				"style_number": "TST-CORE-1001",
 				"style_name": "Classic Polo",
-				"buyer": "Demo Buyer",
+				"buyer": "TST-Demo Buyer",
 				"season": "Spring",
 				"product_category": "Knitted Garments",
 			}
@@ -26,9 +26,9 @@ class TestRmgCoreFlow(FrappeTestCase):
 		lc = frappe.get_doc(
 			{
 				"doctype": "Letter Of Credit",
-				"lc_number": "LC-1001",
+				"lc_number": "TST-CORE-LC-1001",
 				"lc_type": "Master LC",
-				"issuing_bank": "Bank of Test",
+				"issuing_bank": "TST-Bank of Test",
 				"total_value": 100000,
 				"expiry_date": "2099-12-31",
 				"status": "Open",

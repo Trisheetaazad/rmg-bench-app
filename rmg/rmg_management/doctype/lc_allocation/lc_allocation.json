@@ -1,7 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "field:letter_of_credit",
+ "autoname": "format:LC-ALLOC-{letter_of_credit}-{#####}",
  "creation": "2026-08-30 00:00:00",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -28,8 +28,7 @@
    "in_list_view": 1,
    "label": "Letter Of Credit",
    "options": "Letter Of Credit",
-   "reqd": 1,
-   "unique": 1
+   "reqd": 1
   },
   {
    "fieldname": "style_reference",
@@ -62,12 +61,12 @@
    "label": "Exchange Rate"
   },
   {
-   "default": "Draft",
+   "default": "Allocated",
    "fieldname": "allocation_status",
    "fieldtype": "Select",
+   "in_list_view": 1,
    "label": "Allocation Status",
-   "options": "Draft\nAllocated\nReleased\nClosed",
-   "read_only": 1
+   "options": "Allocated\nClosed\nCancelled"
   },
   {
    "fieldname": "notes",
