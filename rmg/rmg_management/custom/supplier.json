@@ -114,7 +114,7 @@
    "name": "Supplier-custom_origin",
    "no_copy": 0,
    "non_negative": 0,
-   "options": "\nLocal \nImport",
+   "options": "\nLocal\nImport",
    "owner": "Administrator",
    "permlevel": 0,
    "placeholder": null,

@@ -64,5 +64,14 @@ def update_lc_utilization(doc, method=None):
 	recalculate_lc_utilization(doc.letter_of_credit)
 
 
+def refresh_lc_utilization(doc, method=None):
+	"""Keep a credit's own utilisation fields correct from the moment it exists.
+
+	Without this a newly created Letter Of Credit shows a remaining amount of
+	zero until some allocation happens to trigger a recalculation.
+	"""
+	recalculate_lc_utilization(doc.name)
+
+
 def remove_lc_utilization(doc, method=None):
 	recalculate_lc_utilization(doc.letter_of_credit)
