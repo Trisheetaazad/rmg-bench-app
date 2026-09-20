@@ -146,6 +146,11 @@ doc_events = {
 	"Payment Entry": {
 		"validate": "rmg.rmg_management.finance_controls.validate_payment_entry",
 	},
+	"Letter Of Credit": {
+		"after_insert": "rmg.rmg_management.finance_controls.refresh_lc_utilization",
+		"on_update": "rmg.rmg_management.finance_controls.refresh_lc_utilization",
+		"on_update_after_submit": "rmg.rmg_management.finance_controls.refresh_lc_utilization",
+	},
 	"LC Allocation": {
 		"after_insert": "rmg.rmg_management.finance_controls.update_lc_utilization",
 		"on_update": "rmg.rmg_management.finance_controls.update_lc_utilization",

@@ -47,7 +47,7 @@
    "name": "Quality Inspection-custom_defect_type",
    "no_copy": 0,
    "non_negative": 0,
-   "options": "\nHoles\nMeasurement \nShading",
+   "options": "\nHoles\nMeasurement\nShading",
    "owner": "Administrator",
    "permlevel": 0,
    "placeholder": null,
