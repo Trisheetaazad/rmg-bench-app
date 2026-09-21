@@ -11,6 +11,9 @@ exact prompt text raised by the engine.
 	python apps/rmg/rmg/tests/demo_scenarios.py --section match
 	python apps/rmg/rmg/tests/demo_scenarios.py --section payment
 
+	bench --site rmg_management execute rmg.tests.demo_scenarios.run
+	bench --site rmg_management execute rmg.tests.demo_scenarios.run --kwargs "{'section': 'match'}"
+
 Exits non-zero if any scenario does not behave as documented, so the same file
 is usable as a smoke test as well as a demonstration.
 """
@@ -399,8 +402,24 @@ def main():
 	)
 	args = parser.parse_args()
 
-	colour = Palette(enabled=not args.no_color and sys.stdout.isatty())
+	return run_demo(args.section, Palette(enabled=not args.no_color and sys.stdout.isatty()))
 
+
+def run(section="all", color=True):
+	"""Entry point for ``bench --site <site> execute rmg.tests.demo_scenarios.run``.
+
+	Pass ``--kwargs "{'section': 'match'}"`` (or ``'payment'``) to run one
+	section, and ``'color': False`` for plain output. Raises if any scenario
+	does not behave as documented, so the command exits non-zero.
+	"""
+	if section not in ("match", "payment", "all"):
+		raise ValueError("section must be 'match', 'payment' or 'all'")
+
+	if run_demo(section, Palette(enabled=color and sys.stdout.isatty())):
+		raise AssertionError("One or more demonstration scenarios did not behave as documented.")
+
+
+def run_demo(section, colour):
 	print()
 	print(colour.bold("RMG MANAGEMENT — SUPPLIER INVOICE AND PAYMENT CONTROL DEMONSTRATION"))
 	print(colour.dim("Every result below is produced by the same server-side code that runs on the site."))
@@ -408,10 +427,10 @@ def main():
 	total_scenarios = 0
 	failures = 0
 
-	if args.section in ("match", "all"):
+	if section in ("match", "all"):
 		failures += demo_matching(colour)
 		total_scenarios += len(MATCH_SCENARIOS) + 1
-	if args.section in ("payment", "all"):
+	if section in ("payment", "all"):
 		failures += demo_payments(colour)
 		total_scenarios += len(PAYMENT_SCENARIOS)
 
