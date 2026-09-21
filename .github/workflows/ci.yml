@@ -101,7 +101,22 @@ jobs:
       - name: Run Tests
         working-directory: /home/runner/frappe-bench
         run: |
+          set -o pipefail
           bench --site test_site set-config allow_tests true
-          bench --site test_site run-tests --app rmg
+          bench --site test_site run-tests --app rmg 2>&1 | tee /tmp/test-output.txt
         env:
           TYPE: server
+
+      # Raise the tail of the test output as an annotation, so a failure is
+      # readable on the run's summary page without opening the job log.
+      - name: Publish test failure
+        if: failure()
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          log = Path("/tmp/test-output.txt")
+          lines = log.read_text(errors="replace").splitlines()[-150:] if log.exists() else ["No test output was captured."]
+          text = "\n".join(lines).replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
+          print(f"::error title=Test run failed::{text}")
+          PY
