@@ -461,20 +461,27 @@ def build_discrepancy_invoice(purchase_order, receipt):
 # Entry points
 # --------------------------------------------------------------------------
 
+# Documents a live rehearsal creates, so one reset leaves the site clean.
+REHEARSAL_LC_PREFIX = "DEMO-%"
+REHEARSAL_ITEM = "TRIM-BTN-18L"
+
 DEMO_DOCUMENTS = [
-	("Purchase Invoice", {"bill_no": "UFL-INV-2026-0331"}),
+	("Payment Entry", {"party_type": "Supplier", "party": SUPPLIER}),
+	("Purchase Invoice", {"supplier": SUPPLIER}),
 	("Quality Inspection", {"item_code": FABRIC_ITEM}),
 	("Purchase Receipt", {"supplier": SUPPLIER}),
 	("Purchase Order", {"supplier": SUPPLIER}),
 	("LC Allocation", {"letter_of_credit": BACK_TO_BACK_LC}),
+	("LC Allocation", {"letter_of_credit": ("like", REHEARSAL_LC_PREFIX)}),
 	("Sales Order", {"customer": BUYER}),
 	("Style Master", {"style_number": STYLE_NUMBER}),
 	("BOM", {"item": STYLE_ITEM}),
 	("Letter Of Credit", {"lc_number": ("in", [MASTER_LC, BACK_TO_BACK_LC])}),
+	("Letter Of Credit", {"lc_number": ("like", REHEARSAL_LC_PREFIX)}),
 	("Supplier", {"supplier_name": SUPPLIER}),
 	("Bank Account", {"account_name": BANK_ACCOUNT}),
 	("Customer", {"customer_name": BUYER}),
-	("Item", {"item_code": ("in", [FABRIC_ITEM, STYLE_ITEM])}),
+	("Item", {"item_code": ("in", [FABRIC_ITEM, STYLE_ITEM, REHEARSAL_ITEM])}),
 ]
 
 
