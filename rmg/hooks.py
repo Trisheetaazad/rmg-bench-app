@@ -149,6 +149,7 @@ doc_events = {
 	"Letter Of Credit": {
 		"after_insert": "rmg.rmg_management.finance_controls.refresh_lc_utilization",
 		"on_update": "rmg.rmg_management.finance_controls.refresh_lc_utilization",
+		"on_submit": "rmg.rmg_management.finance_controls.refresh_lc_utilization",
 		"on_update_after_submit": "rmg.rmg_management.finance_controls.refresh_lc_utilization",
 	},
 	"LC Allocation": {
@@ -161,8 +162,14 @@ doc_events = {
 	},
 }
 
-after_install = "rmg.rmg_management.purchase_invoice_matching.ensure_custom_fields"
-after_migrate = "rmg.rmg_management.purchase_invoice_matching.ensure_custom_fields"
+after_install = [
+	"rmg.rmg_management.purchase_invoice_matching.ensure_custom_fields",
+	"rmg.rmg_management.install.apply_item_naming",
+]
+after_migrate = [
+	"rmg.rmg_management.purchase_invoice_matching.ensure_custom_fields",
+	"rmg.rmg_management.install.apply_item_naming",
+]
 
 # Scheduled Tasks
 # ---------------

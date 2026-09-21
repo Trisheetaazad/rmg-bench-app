@@ -39,8 +39,15 @@ def recalculate_lc_utilization(lc_name):
 	)
 	remaining_amount = max(lc_total - utilized_amount, 0)
 	utilization_percent = (utilized_amount / lc_total * 100) if lc_total else 0
-	current_status = frappe.db.get_value("Letter Of Credit", lc_name, "status")
-	status = "Closed" if current_status == "Closed" else ("Exhausted" if lc_total and utilized_amount >= lc_total else "Open")
+	current_status, docstatus = frappe.db.get_value("Letter Of Credit", lc_name, ["status", "docstatus"])
+	if current_status == "Closed":
+		status = "Closed"
+	elif docstatus == 0:
+		status = "Draft"
+	elif lc_total and utilized_amount >= lc_total:
+		status = "Exhausted"
+	else:
+		status = "Open"
 
 	frappe.db.set_value(
 		"Letter Of Credit",

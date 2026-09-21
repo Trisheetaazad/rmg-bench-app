@@ -372,6 +372,10 @@ class TestFunctionalTable(IntegrationTestCase):
 		self.assertEqual(item.custom_colorsize, 'Navy / 60"')
 		self.assertEqual(item.stock_uom, "Meter")
 
+		# Items are named by their code, and the app itself applies that setting
+		self.assertEqual(frappe.db.get_single_value("Stock Settings", "item_naming_by"), "Item Code")
+		self.assertEqual(item.name, FABRIC_ITEM)
+
 		# ...and the fields sit where the report says they do: GSM/Count right
 		# after the item group, Color/Size right after GSM/Count.
 		self.assertEqual(
@@ -576,6 +580,30 @@ class TestFunctionalTable(IntegrationTestCase):
 			"custom_withdrawer_designation",
 		):
 			self.assertIn(fieldname, fieldnames)
+
+	def test_t10a_letter_of_credit_status_lifecycle(self):
+		"""Draft while unsubmitted, Open on submit - never skipped straight to Open."""
+		lc = frappe.get_doc(
+			{
+				"doctype": "Letter Of Credit",
+				"lc_number": "TST-LC-LIFECYCLE",
+				"lc_type": "Back-to-Back",
+				"issuing_bank": frappe.db.get_value("Bank", {}, "name"),
+				"total_value": 100_000,
+				"expiry_date": add_days(nowdate(), 90),
+				"status": "Draft",
+			}
+		).insert(ignore_permissions=True)
+
+		lc.reload()
+		self.assertEqual(lc.status, "Draft")
+		self.assertEqual(lc.custom_remaining_amount, 100_000)
+
+		lc.submit()
+		lc.reload()
+		self.assertEqual(lc.status, "Open")
+
+		force_delete("Letter Of Credit", lc.name)
 
 	# T10 ------------------------------------------------------------------
 	def test_t10_lc_allocation_recalculates_utilisation(self):

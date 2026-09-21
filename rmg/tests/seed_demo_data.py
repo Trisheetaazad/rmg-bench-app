@@ -411,10 +411,11 @@ def build_quality_inspection(receipt):
 				"custom_defect_type": "Shading",
 			}
 		).insert(ignore_permissions=True)
+		inspection.submit()
 	finally:
 		frappe.db.set_value("Item", FABRIC_ITEM, "inspection_required_before_purchase", 0)
 
-	step(f"Quality Inspection {inspection.name}  (Defect Type: Shading, status Rejected)")
+	step(f"Quality Inspection {inspection.name}  (Defect Type: Shading, status Rejected, submitted)")
 	return inspection
 
 
