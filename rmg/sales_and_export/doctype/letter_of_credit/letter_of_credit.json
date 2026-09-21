@@ -67,11 +67,11 @@
    "label": "Expiry date"
   },
   {
+   "allow_on_submit": 1,
    "fieldname": "status",
    "fieldtype": "Select",
    "label": "Status",
-   "options": "Draft\nOpen\nExhausted\nClosed",
-   "read_only": 1
+   "options": "Draft\nOpen\nExhausted\nClosed"
   }
  ],
  "grid_page_length": 50,

@@ -595,6 +595,26 @@ class TestFunctionalTable(IntegrationTestCase):
 		lc.reload()
 		self.assertEqual(lc.status, "Open")
 
+		# a wrong manual status is corrected from the figures on save
+		lc.status = "Exhausted"
+		lc.save(ignore_permissions=True)
+		lc.reload()
+		self.assertEqual(lc.status, "Open")
+
+		# finance can close a submitted credit by hand, and a later
+		# recalculation must never reopen it
+		lc.status = "Closed"
+		lc.save(ignore_permissions=True)
+		recalculate_lc_utilization(lc.name)
+		lc.reload()
+		self.assertEqual(lc.status, "Closed")
+
+		# ...but finance can reopen it deliberately
+		lc.status = "Open"
+		lc.save(ignore_permissions=True)
+		lc.reload()
+		self.assertEqual(lc.status, "Open")
+
 		force_delete("Letter Of Credit", lc.name)
 
 	# T10 ------------------------------------------------------------------
