@@ -31,17 +31,20 @@ class LCAllocation(Document):
 		if not self.letter_of_credit:
 			frappe.throw("Letter Of Credit is mandatory.")
 
-		existing_total = frappe.db.sql(
-			"""
+		existing_total = (
+			frappe.db.sql(
+				"""
 			SELECT IFNULL(SUM(allocated_amount), 0)
 			FROM `tabLC Allocation`
 			WHERE letter_of_credit = %s
 				AND name != %s
 				AND allocation_status IN %s
 			""",
-			(self.letter_of_credit, self.name, ACTIVE_ALLOCATION_STATUSES),
-		)[0][0] or 0
-		
+				(self.letter_of_credit, self.name, ACTIVE_ALLOCATION_STATUSES),
+			)[0][0]
+			or 0
+		)
+
 		lc_total = frappe.db.get_value("Letter Of Credit", self.letter_of_credit, "total_value") or 0
 		remaining = float(lc_total) - float(existing_total)
 		if self.allocated_amount > remaining:

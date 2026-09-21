@@ -17,7 +17,9 @@ class StyleMaster(Document):
 		description: DF.TextEditor | None
 		master_lc: DF.Link | None
 		notes: DF.Text | None
-		product_category: DF.Literal["", "Knitted Garments", "Denim", "Woven Garments", "Accessories", "Home Textile"]
+		product_category: DF.Literal[
+			"", "Knitted Garments", "Denim", "Woven Garments", "Accessories", "Home Textile"
+		]
 		season: DF.Literal["", "Spring", "Summer", "Autumn", "Winter", "All Year"]
 		status: DF.Literal["Draft", "Active", "Hold", "Closed"]
 		style_name: DF.Data

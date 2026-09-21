@@ -3,7 +3,6 @@ from frappe import _
 from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 from frappe.utils import flt
 
-
 PO_RECEIPT_FIELD = "custom_po_receipt_"
 
 
@@ -71,7 +70,7 @@ def ensure_custom_fields():
 					"read_only": 1,
 					"insert_after": "custom_match_status",
 				},
-			]
+			],
 		}
 	)
 

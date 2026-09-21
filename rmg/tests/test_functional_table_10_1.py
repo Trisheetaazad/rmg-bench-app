@@ -79,9 +79,7 @@ def purge_test_documents():
 		for name in frappe.get_all(doctype, filters={"name": ("like", "TST-%")}, pluck="name"):
 			force_delete(doctype, name)
 		if doctype == "Bank Account":
-			for name in frappe.get_all(
-				doctype, filters={"account_name": ("like", "TST-%")}, pluck="name"
-			):
+			for name in frappe.get_all(doctype, filters={"account_name": ("like", "TST-%")}, pluck="name"):
 				force_delete(doctype, name)
 		if doctype == "LC Allocation":
 			for name in frappe.get_all(doctype, filters={"name": ("like", "LC-ALLOC-TST-%")}, pluck="name"):
@@ -137,9 +135,11 @@ def make_bank_account():
 
 	bank = frappe.db.get_value("Bank", {}, "name")
 	if not bank:
-		bank = frappe.get_doc({"doctype": "Bank", "bank_name": "TST-Demo Bank"}).insert(
-			ignore_permissions=True
-		).name
+		bank = (
+			frappe.get_doc({"doctype": "Bank", "bank_name": "TST-Demo Bank"})
+			.insert(ignore_permissions=True)
+			.name
+		)
 
 	return frappe.get_doc(
 		{
@@ -154,9 +154,7 @@ def make_supplier():
 	if frappe.db.exists("Supplier", SUPPLIER):
 		return frappe.get_doc("Supplier", SUPPLIER)
 
-	supplier_group = (
-		"Fabric" if frappe.db.exists("Supplier Group", "Fabric") else "All Supplier Groups"
-	)
+	supplier_group = "Fabric" if frappe.db.exists("Supplier Group", "Fabric") else "All Supplier Groups"
 	return frappe.get_doc(
 		{
 			"doctype": "Supplier",
@@ -238,9 +236,7 @@ def make_purchase_order():
 	make_supplier()
 	lc = make_letter_of_credit(BACK_TO_BACK_LC, "Back-to-Back", 1_500_000)
 
-	existing = frappe.db.get_value(
-		"Purchase Order", {"supplier": SUPPLIER, "docstatus": 1}, "name"
-	)
+	existing = frappe.db.get_value("Purchase Order", {"supplier": SUPPLIER, "docstatus": 1}, "name")
 	if existing:
 		return frappe.get_doc("Purchase Order", existing)
 
@@ -286,9 +282,7 @@ def make_rejected_warehouse():
 def make_purchase_receipt():
 	po = make_purchase_order()
 
-	existing = frappe.db.get_value(
-		"Purchase Receipt", {"supplier": SUPPLIER, "docstatus": 1}, "name"
-	)
+	existing = frappe.db.get_value("Purchase Receipt", {"supplier": SUPPLIER, "docstatus": 1}, "name")
 	if existing:
 		return frappe.get_doc("Purchase Receipt", existing)
 
@@ -379,11 +373,15 @@ class TestFunctionalTable(IntegrationTestCase):
 		# ...and the fields sit where the report says they do: GSM/Count right
 		# after the item group, Color/Size right after GSM/Count.
 		self.assertEqual(
-			frappe.db.get_value("Custom Field", {"dt": "Item", "fieldname": "custom_gsmcount"}, "insert_after"),
+			frappe.db.get_value(
+				"Custom Field", {"dt": "Item", "fieldname": "custom_gsmcount"}, "insert_after"
+			),
 			"item_group",
 		)
 		self.assertEqual(
-			frappe.db.get_value("Custom Field", {"dt": "Item", "fieldname": "custom_colorsize"}, "insert_after"),
+			frappe.db.get_value(
+				"Custom Field", {"dt": "Item", "fieldname": "custom_colorsize"}, "insert_after"
+			),
 			"custom_gsmcount",
 		)
 
@@ -425,9 +423,7 @@ class TestFunctionalTable(IntegrationTestCase):
 		po = make_purchase_order()
 
 		self.assertEqual(po.custom_letter_of_credit, BACK_TO_BACK_LC)
-		self.assertEqual(
-			frappe.db.get_value("Letter Of Credit", BACK_TO_BACK_LC, "lc_type"), "Back-to-Back"
-		)
+		self.assertEqual(frappe.db.get_value("Letter Of Credit", BACK_TO_BACK_LC, "lc_type"), "Back-to-Back")
 		self.assertIsNotNone(po.custom_delivery_date)
 		self.assertEqual(str(po.custom_delivery_date), add_days(nowdate(), 30))
 		self.assertEqual(po.items[0].rate, PO_RATE)
@@ -457,9 +453,7 @@ class TestFunctionalTable(IntegrationTestCase):
 		# Enable it just for this test so the already-submitted receipt above is
 		# not retrospectively required to carry an inspection.
 		frappe.db.set_value("Item", FABRIC_ITEM, "inspection_required_before_purchase", 1)
-		self.addCleanup(
-			frappe.db.set_value, "Item", FABRIC_ITEM, "inspection_required_before_purchase", 0
-		)
+		self.addCleanup(frappe.db.set_value, "Item", FABRIC_ITEM, "inspection_required_before_purchase", 0)
 
 		inspection = frappe.get_doc(
 			{
@@ -495,7 +489,9 @@ class TestFunctionalTable(IntegrationTestCase):
 		self.assertTrue(frappe.db.exists("Purchase Receipt", invoice.custom_po_receipt_))
 
 		# and the match fields are present and populated
-		self.assertIn("custom_match_status", [f.fieldname for f in frappe.get_meta("Purchase Invoice").fields])
+		self.assertIn(
+			"custom_match_status", [f.fieldname for f in frappe.get_meta("Purchase Invoice").fields]
+		)
 		self.assertIn(
 			"custom_difference_amount", [f.fieldname for f in frappe.get_meta("Purchase Invoice").fields]
 		)
@@ -513,9 +509,7 @@ class TestFunctionalTable(IntegrationTestCase):
 		claimed_amount = ACCEPTED_QTY * claimed_rate  # BDT 1,152,000.00
 
 		self.assertEqual(invoice.custom_match_status, "Discrepancy")
-		self.assertAlmostEqual(
-			invoice.custom_difference_amount, claimed_amount - EXPECTED_AMOUNT, places=2
-		)
+		self.assertAlmostEqual(invoice.custom_difference_amount, claimed_amount - EXPECTED_AMOUNT, places=2)
 		self.assertAlmostEqual(invoice.custom_difference_amount, -48_000.00, places=2)
 
 		force_delete("Purchase Invoice", invoice.name)
@@ -530,9 +524,7 @@ class TestFunctionalTable(IntegrationTestCase):
 		claimed_amount = RECEIVED_QTY * PO_RATE  # BDT 1,250,000.00
 
 		self.assertEqual(invoice.custom_match_status, "Discrepancy")
-		self.assertAlmostEqual(
-			invoice.custom_difference_amount, claimed_amount - EXPECTED_AMOUNT, places=2
-		)
+		self.assertAlmostEqual(invoice.custom_difference_amount, claimed_amount - EXPECTED_AMOUNT, places=2)
 		# the 200 m rejected for shading, valued at the PO rate
 		self.assertAlmostEqual(invoice.custom_difference_amount, 50_000.00, places=2)
 

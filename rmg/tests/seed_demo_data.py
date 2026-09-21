@@ -101,7 +101,7 @@ def build_items():
 				"custom_colorsize": 'Navy / 60"',
 			}
 		).insert(ignore_permissions=True)
-		step(f"Item          {FABRIC_ITEM}  (160 GSM, Navy / 60\", Meter)")
+		step(f'Item          {FABRIC_ITEM}  (160 GSM, Navy / 60", Meter)')
 
 	style = existing("Item", STYLE_ITEM)
 	if not style:
@@ -153,9 +153,9 @@ def build_bank_account():
 	if found:
 		return frappe.get_doc("Bank Account", found)
 
-	account = frappe.get_doc(
-		{"doctype": "Bank Account", "account_name": BANK_ACCOUNT, "bank": BANK}
-	).insert(ignore_permissions=True)
+	account = frappe.get_doc({"doctype": "Bank Account", "account_name": BANK_ACCOUNT, "bank": BANK}).insert(
+		ignore_permissions=True
+	)
 	step(f"Bank Account  {account.name}")
 	return account
 
@@ -279,9 +279,7 @@ def build_style_master(master_lc, bom):
 
 
 def build_lc_allocation(back_to_back_lc, style):
-	found = frappe.db.get_value(
-		"LC Allocation", {"letter_of_credit": back_to_back_lc.name}, "name"
-	)
+	found = frappe.db.get_value("LC Allocation", {"letter_of_credit": back_to_back_lc.name}, "name")
 	if found:
 		return frappe.get_doc("LC Allocation", found)
 
@@ -343,9 +341,9 @@ def build_rejected_warehouse():
 	name = warehouse("Rejected")
 	if frappe.db.exists("Warehouse", name):
 		return name
-	frappe.get_doc(
-		{"doctype": "Warehouse", "warehouse_name": "Rejected", "company": company()}
-	).insert(ignore_permissions=True)
+	frappe.get_doc({"doctype": "Warehouse", "warehouse_name": "Rejected", "company": company()}).insert(
+		ignore_permissions=True
+	)
 	step(f"Warehouse     {name}  (for QC rejections)")
 	return name
 
@@ -486,9 +484,7 @@ def _purge():
 				doc = frappe.get_doc(doctype, name)
 				if doc.meta.is_submittable and doc.docstatus == 1:
 					doc.cancel()
-				frappe.delete_doc(
-					doctype, name, force=True, ignore_permissions=True, delete_permanently=True
-				)
+				frappe.delete_doc(doctype, name, force=True, ignore_permissions=True, delete_permanently=True)
 				removed += 1
 				step(f"removed {doctype} {name}")
 			except Exception as error:
@@ -517,9 +513,7 @@ def seed(reset=False, with_invoice=False):
 	build_customer()
 	build_sales_order(master_lc)
 	style = build_style_master(master_lc, bom)
-	back_to_back_lc = build_letter_of_credit(
-		BACK_TO_BACK_LC, "Back-to-Back", BACK_TO_BACK_LC_VALUE
-	)
+	back_to_back_lc = build_letter_of_credit(BACK_TO_BACK_LC, "Back-to-Back", BACK_TO_BACK_LC_VALUE)
 	build_lc_allocation(back_to_back_lc, style)
 	purchase_order = build_purchase_order(back_to_back_lc)
 	receipt = build_purchase_receipt(purchase_order)

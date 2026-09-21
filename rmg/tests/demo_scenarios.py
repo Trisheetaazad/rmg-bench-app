@@ -27,9 +27,9 @@ BENCH_ROOT = Path(__file__).resolve().parents[4]
 if (BENCH_ROOT / "sites").is_dir():
 	os.chdir(BENCH_ROOT / "sites")
 
-from rmg.rmg_management.finance_controls import validate_payment_entry  # noqa: E402
-from rmg.rmg_management.purchase_invoice_matching import validate as validate_invoice  # noqa: E402
-from rmg.tests.sample_test_documents import (  # noqa: E402
+from rmg.rmg_management.finance_controls import validate_payment_entry
+from rmg.rmg_management.purchase_invoice_matching import validate as validate_invoice
+from rmg.tests.sample_test_documents import (
 	make_payment_entry,
 	make_purchase_invoice,
 	make_purchase_order,
@@ -103,12 +103,15 @@ def run_match(po_rate, ordered_qty, received_qty, rejected_qty, claimed_amount, 
 		captured["title"] = str(title)
 		captured["indicator"] = indicator
 
-	with patch(
-		"rmg.rmg_management.purchase_invoice_matching.frappe.get_doc",
-		side_effect=[po, receipt],
-	), patch(
-		"rmg.rmg_management.purchase_invoice_matching.frappe.msgprint",
-		side_effect=fake_msgprint,
+	with (
+		patch(
+			"rmg.rmg_management.purchase_invoice_matching.frappe.get_doc",
+			side_effect=[po, receipt],
+		),
+		patch(
+			"rmg.rmg_management.purchase_invoice_matching.frappe.msgprint",
+			side_effect=fake_msgprint,
+		),
 	):
 		validate_invoice(invoice)
 
@@ -195,7 +198,9 @@ def demo_matching(colour):
 			f"{case['rejected_qty']:,.0f} rejected, {accepted_qty:,.0f} accepted"
 		)
 		print(f"      Supplier claims    {money(case['claimed_amount'])}")
-		print(f"      System expects     {money(expected_amount)}   ({accepted_qty:,.0f} x {case['po_rate']:,.2f})")
+		print(
+			f"      System expects     {money(expected_amount)}   ({accepted_qty:,.0f} x {case['po_rate']:,.2f})"
+		)
 		print()
 
 		invoice, prompt = run_match(
@@ -213,19 +218,24 @@ def demo_matching(colour):
 		print()
 
 		if prompt:
-			print(colour.red(f'      ON SCREEN  [{prompt["indicator"]}]  {prompt["title"]}'))
+			print(colour.red(f"      ON SCREEN  [{prompt['indicator']}]  {prompt['title']}"))
 			print(colour.red(f'                 "{prompt["message"]}"'))
 			print(colour.dim("                 Invoice is held for procurement review."))
 		else:
 			print(colour.green("      ON SCREEN  (no prompt — the invoice saves quietly)"))
 			print(colour.dim("                 Invoice is cleared to go to Finance for payment."))
 
-		ok = status == case["expect_status"] and abs(
-			float(invoice.custom_difference_amount or 0) - case["expect_difference"]
-		) < 0.01
+		ok = (
+			status == case["expect_status"]
+			and abs(float(invoice.custom_difference_amount or 0) - case["expect_difference"]) < 0.01
+		)
 		failures += 0 if ok else 1
 		print()
-		print("      " + (colour.green("PASS") if ok else colour.red("FAIL")) + colour.dim(f"  expected {case['expect_status']}"))
+		print(
+			"      "
+			+ (colour.green("PASS") if ok else colour.red("FAIL"))
+			+ colour.dim(f"  expected {case['expect_status']}")
+		)
 
 	# The engine must stay out of the way when the invoice is not linked up.
 	scenario_header(colour, "1.6", "Invoice with no PO / Receipt reference — engine stays silent")
@@ -237,7 +247,11 @@ def demo_matching(colour):
 	print(colour.green("      ON SCREEN  (no prompt)") if silent else colour.red("      unexpected output"))
 	failures += 0 if silent else 1
 	print()
-	print("      " + (colour.green("PASS") if silent else colour.red("FAIL")) + colour.dim("  expected no match attempted"))
+	print(
+		"      "
+		+ (colour.green("PASS") if silent else colour.red("FAIL"))
+		+ colour.dim("  expected no match attempted")
+	)
 
 	return failures
 
@@ -346,7 +360,9 @@ def demo_payments(colour):
 		print(f"      Mode of Payment         {fields.get('mode_of_payment') or colour.dim('(blank)')}")
 		if "cheque" in str(fields.get("mode_of_payment") or "").lower():
 			print(f"      Cheque Withdrawer       {fields.get('cheque_withdrawer') or colour.dim('(blank)')}")
-			print(f"      Withdrawer Designation  {fields.get('withdrawer_designation') or colour.dim('(blank)')}")
+			print(
+				f"      Withdrawer Designation  {fields.get('withdrawer_designation') or colour.dim('(blank)')}"
+			)
 		print()
 
 		refusal = run_payment(**fields)
@@ -363,7 +379,11 @@ def demo_payments(colour):
 		failures += 0 if ok else 1
 		print()
 		expected = "refusal" if case["expect_refused"] else "acceptance"
-		print("      " + (colour.green("PASS") if ok else colour.red("FAIL")) + colour.dim(f"  expected {expected}"))
+		print(
+			"      "
+			+ (colour.green("PASS") if ok else colour.red("FAIL"))
+			+ colour.dim(f"  expected {expected}")
+		)
 
 	return failures
 

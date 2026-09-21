@@ -5,10 +5,14 @@ from frappe.tests import IntegrationTestCase
 class TestRmgCoreFlow(IntegrationTestCase):
 	def test_style_master_and_lc_allocation_flow(self):
 		if not frappe.db.exists("Customer", "TST-Demo Buyer"):
-			frappe.get_doc({"doctype": "Customer", "customer_name": "TST-Demo Buyer"}).insert(ignore_permissions=True)
+			frappe.get_doc({"doctype": "Customer", "customer_name": "TST-Demo Buyer"}).insert(
+				ignore_permissions=True
+			)
 
 		if not frappe.db.exists("Bank", "TST-Bank of Test"):
-			frappe.get_doc({"doctype": "Bank", "bank_name": "TST-Bank of Test"}).insert(ignore_permissions=True)
+			frappe.get_doc({"doctype": "Bank", "bank_name": "TST-Bank of Test"}).insert(
+				ignore_permissions=True
+			)
 
 		style = frappe.get_doc(
 			{

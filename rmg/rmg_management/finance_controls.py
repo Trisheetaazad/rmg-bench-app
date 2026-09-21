@@ -2,7 +2,6 @@ import frappe
 from frappe import _
 from frappe.utils import flt
 
-
 PAYMENT_ENTRY_VOUCHER_TYPES = ("Contra Entry", "Bank Entry")
 ACTIVE_ALLOCATION_STATUSES = ("Allocated", "Closed")
 

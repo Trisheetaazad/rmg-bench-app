@@ -28,10 +28,13 @@ def run_validate(claimed_amount, rejected_qty=0.0, po_rate=PO_RATE, received_qty
 	receipt = make_purchase_receipt(received_qty=received_qty, rejected_qty=rejected_qty)
 	invoice = make_purchase_invoice(claimed_amount)
 
-	with patch(
-		"rmg.rmg_management.purchase_invoice_matching.frappe.get_doc",
-		side_effect=[po, receipt],
-	), patch("rmg.rmg_management.purchase_invoice_matching.frappe.msgprint") as msgprint:
+	with (
+		patch(
+			"rmg.rmg_management.purchase_invoice_matching.frappe.get_doc",
+			side_effect=[po, receipt],
+		),
+		patch("rmg.rmg_management.purchase_invoice_matching.frappe.msgprint") as msgprint,
+	):
 		validate(invoice)
 
 	return invoice, msgprint
@@ -78,10 +81,13 @@ class TestPurchaseInvoiceMatching(TestCase):
 		invoice = make_purchase_invoice(100)
 		invoice.custom_po_no = None
 
-		with patch(
-			"rmg.rmg_management.purchase_invoice_matching.frappe.get_doc",
-			side_effect=[po, receipt],
-		), patch("rmg.rmg_management.purchase_invoice_matching.frappe.msgprint") as msgprint:
+		with (
+			patch(
+				"rmg.rmg_management.purchase_invoice_matching.frappe.get_doc",
+				side_effect=[po, receipt],
+			),
+			patch("rmg.rmg_management.purchase_invoice_matching.frappe.msgprint") as msgprint,
+		):
 			validate(invoice)
 
 		self.assertIsNone(invoice.custom_match_status)
