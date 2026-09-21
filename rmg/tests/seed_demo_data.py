@@ -165,7 +165,11 @@ def build_supplier():
 	if found:
 		return found
 
-	group = "Fabric" if frappe.db.exists("Supplier Group", "Fabric") else "All Supplier Groups"
+	group = (
+		"Fabric"
+		if frappe.db.exists("Supplier Group", "Fabric")
+		else frappe.db.get_value("Supplier Group", {"is_group": 0}, "name")
+	)
 	supplier = frappe.get_doc(
 		{
 			"doctype": "Supplier",

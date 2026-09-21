@@ -195,7 +195,7 @@ after_migrate = [
 # Testing
 # -------
 
-# before_tests = "rmg.install.before_tests"
+before_tests = "rmg.tests.environment.before_tests"
 
 # Extend DocType Class
 # ------------------------------

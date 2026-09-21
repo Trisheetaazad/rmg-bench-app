@@ -154,7 +154,11 @@ def make_supplier():
 	if frappe.db.exists("Supplier", SUPPLIER):
 		return frappe.get_doc("Supplier", SUPPLIER)
 
-	supplier_group = "Fabric" if frappe.db.exists("Supplier Group", "Fabric") else "All Supplier Groups"
+	supplier_group = (
+		"Fabric"
+		if frappe.db.exists("Supplier Group", "Fabric")
+		else frappe.db.get_value("Supplier Group", {"is_group": 0}, "name")
+	)
 	return frappe.get_doc(
 		{
 			"doctype": "Supplier",
